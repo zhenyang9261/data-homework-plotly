@@ -3,75 +3,107 @@ function buildMetadata(sample) {
   // @TODO: Complete the following function that builds the metadata panel
 
   // Use `d3.json` to fetch the metadata for a sample
-    // Use d3 to select the panel with id of `#sample-metadata`
+  var metadataJson = d3.json("/metadata/"+sample);
 
-    // Use `.html("") to clear any existing metadata
+  // Use d3 to select the panel with id of `#sample-metadata`
+  metadataDiv = d3.select("#sample-metadata");
 
-    // Use `Object.entries` to add each key and value pair to the panel
-    // Hint: Inside the loop, you will need to use d3 to append new
-    // tags for each key-value in the metadata.
+  // Use `.html("") to clear any existing metadata
+  metadataDiv.html("");
 
-    // BONUS: Build the Gauge Chart
-    // buildGauge(data.WFREQ);
+  // Use `Object.entries` to add each key and value pair to the panel
+  // Append new tags for each key-value in the metadata.
+  metadataJson.then(function(metadata) {
+     Object.entries(metadata).forEach(([key, value]) => {
+      var newline = metadataDiv.append("div");
+      newline.text(key +": " + value);
+    });
+  });
+
+  // BONUS: Build the Gauge Chart
+  // buildGauge(data.WFREQ);
 }
 
 function buildCharts(sample) {
 
-    // @TODO: Use `d3.json` to fetch the sample data for the plots
-    var sampleJson = d3.json("/samples/"+sample);
+  // Use `d3.json` to fetch the sample data for the plots
+  var sampleJson = d3.json("/samples/"+sample);
 
-    // @TODO: Build a Bubble Chart using the sample data
-
-    // Build a Pie Chart with the top 10 samples
-    sampleJson.then(function(sample) {
+  /*
+    * Build a Bubble Chart using the sample data
+    */
+  sampleJson.then(function(sample) {
     
-      // Choose first 10 data
-      var topTenIDs = sample.otu_ids;
-      var topTenLabels = sample.otu_labels;
-      var topTenSamples = sample.sample_values;
+    // Assign json data to arrays
+    var ids = sample.otu_ids;
+    var labels = sample.otu_labels;
+    var samples = sample.sample_values;
       
-      //console.log(topTenIDs);
-      //console.log(topTenLabels);
-      //console.log(topTenSamples);
+    var trace = {
+        x: ids,
+        y: samples,
+        mode: 'markers',
+        marker: {
+          size: samples,
+          color: ids
+        },
+        text: labels
+    };
+    
+    var layout = {
+        title: "Belly Button Biodiversity",
+        showlegend: false,
+        height: 400,
+        width: 1000
+    };
+    
+      Plotly.newPlot('bubble', [trace], layout);
+  });
 
-      // Sort the arrays in desc order
-      //1) combine the arrays:
-      var list = [];
-      for (var i = 0; i < topTenIDs.length; i++) 
-        list.push({'id': topTenIDs[i], 'label': topTenLabels[i], 'sample': topTenSamples[i]});
+  /* 
+    * Build a Pie Chart with the top 10 samples
+    */
+  sampleJson.then(function(sample) {
+    
+    // Assign json data to arrays
+    var topTenIDs = sample.otu_ids;
+    var topTenLabels = sample.otu_labels;
+    var topTenSamples = sample.sample_values;
+ 
+    // Sort the arrays in desc order
+    //1) combine the arrays:
+    var list = [];
+    for (var i = 0; i < topTenIDs.length; i++) 
+      list.push({'id': topTenIDs[i], 'label': topTenLabels[i], 'sample': topTenSamples[i]});
 
-      //2) sort in desc order:
-      list.sort(function(a, b) {
-        return ((a.sample > b.sample) ? -1 : ((a.sample == b.sample) ? 0 : 1));
-      });
+    //2) sort in desc order:
+    list.sort(function(a, b) {
+      return ((a.sample > b.sample) ? -1 : ((a.sample == b.sample) ? 0 : 1));
+    });
 
-      //3) separate them back out:
-      for (var j = 0; j < list.length; j++) {
-        topTenIDs[j] = list[j].id;
-        topTenLabels[j] = list[j].label;
-        topTenSamples[j] = list[j].sample;
-      }
+    //3) separate them back out:
+    for (var j = 0; j < list.length; j++) {
+      topTenIDs[j] = list[j].id;
+      topTenLabels[j] = list[j].label;
+      topTenSamples[j] = list[j].sample;
+    }
 
-      console.log(topTenIDs.slice(0, 10));
-      console.log(topTenLabels.slice(0, 10));
-      console.log(topTenSamples.slice(0, 10));
-
-      var data = {
+    // Plot the pie chart
+    var trace = {
         type: "pie",
-        name: "Belly Button Biodiversity",
         labels: topTenIDs.slice(0, 10),
         values: topTenSamples.slice(0, 10),
         hovertext: topTenLabels.slice(0, 10)
-      };
+    };
 
-      var layout = {
-        title: "Belly Button Biodiversity",
+    var layout = {
+        title: "Belly Button Biodiversity - Top 10 Sample Values",
         height: 400,
         width: 500
-      };
+    };
 
-      Plotly.newPlot("pie", [data], layout);
-    });
+    Plotly.newPlot("pie", [trace], layout);
+  });
 }
 
 function init() {

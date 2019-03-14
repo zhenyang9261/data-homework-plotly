@@ -52,9 +52,9 @@ function buildCharts(sample) {
     
     var layout = {
         title: "Belly Button Biodiversity",
-        showlegend: false,
-        height: 400,
-        width: 1000
+        showlegend: false
+        //height: 400,
+        //width: 1000
     };
     
       Plotly.newPlot('bubble', [trace], layout);
@@ -97,9 +97,9 @@ function buildCharts(sample) {
     };
 
     var layout = {
-        title: "Belly Button Biodiversity - Top 10 Sample Values",
-        height: 400,
-        width: 500
+        title: "Belly Button Biodiversity - Top 10 Sample Values"
+        //height: 400,
+        //width: 500
     };
 
     Plotly.newPlot("pie", [trace], layout);
@@ -124,6 +124,7 @@ function init() {
     const firstSample = sampleNames[0];
     buildCharts(firstSample);
     buildMetadata(firstSample);
+    buildGauge(firstSample);
   });
 }
 
@@ -131,6 +132,7 @@ function optionChanged(newSample) {
   // Fetch new data each time a new sample is selected
   buildCharts(newSample);
   buildMetadata(newSample);
+  buildGauge(newSample);
 }
 
 // Initialize the dashboard

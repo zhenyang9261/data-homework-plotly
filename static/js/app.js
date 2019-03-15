@@ -57,7 +57,7 @@ function buildCharts(sample) {
     };
     
     var layout = {
-        title: "Belly Button Biodiversity",
+        title: "<b>Belly Button Biodiversity</b>",
         showlegend: false
     };
     
@@ -101,7 +101,7 @@ function buildCharts(sample) {
     };
 
     var layout = {
-        title: "Belly Button Biodiversity - Top 10 Sample Values"
+        title: "<b>Belly Button Biodiversity</b><br />Top 10 Sample Values"
     };
 
     Plotly.newPlot("pie", [trace], layout);

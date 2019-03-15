@@ -1,6 +1,8 @@
+/**
+ * Function to display metadata of a given sample 
+ * @param {String} sample: the sample to build the metadata section
+ */
 function buildMetadata(sample) {
-
-  // @TODO: Complete the following function that builds the metadata panel
 
   // Use `d3.json` to fetch the metadata for a sample
   var metadataJson = d3.json("/metadata/"+sample);
@@ -21,9 +23,13 @@ function buildMetadata(sample) {
   });
 
   // BONUS: Build the Gauge Chart
-  // buildGauge(data.WFREQ);
+  buildGauge(sample);
 }
 
+/**
+ * Function to display the pie chart and the bubble chart of a given sample 
+ * @param {String} sample: the sample to build the charts
+ */
 function buildCharts(sample) {
 
   // Use `d3.json` to fetch the sample data for the plots
@@ -53,16 +59,14 @@ function buildCharts(sample) {
     var layout = {
         title: "Belly Button Biodiversity",
         showlegend: false
-        //height: 400,
-        //width: 1000
     };
     
       Plotly.newPlot('bubble', [trace], layout);
   });
 
   /* 
-    * Build a Pie Chart with the top 10 samples
-    */
+   * Build a Pie Chart with the top 10 samples
+   */
   sampleJson.then(function(sample) {
     
     // Assign json data to arrays
@@ -98,14 +102,15 @@ function buildCharts(sample) {
 
     var layout = {
         title: "Belly Button Biodiversity - Top 10 Sample Values"
-        //height: 400,
-        //width: 500
     };
 
     Plotly.newPlot("pie", [trace], layout);
   });
 }
 
+/**
+ * Function to display the initial page with the first sample
+ */
 function init() {
   // Grab a reference to the dropdown select element
   var selector = d3.select("#selDataset");
@@ -122,17 +127,20 @@ function init() {
 
     // Use the first sample from the list to build the initial plots
     const firstSample = sampleNames[0];
+  
     buildCharts(firstSample);
     buildMetadata(firstSample);
-    buildGauge(firstSample);
   });
 }
 
+/**
+ * Function to rebuild the charts when a new sample is selected from the dropdown 
+ * @param {Object} newSample: the new sample selected
+ */
 function optionChanged(newSample) {
   // Fetch new data each time a new sample is selected
   buildCharts(newSample);
   buildMetadata(newSample);
-  buildGauge(newSample);
 }
 
 // Initialize the dashboard

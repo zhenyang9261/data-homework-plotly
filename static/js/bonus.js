@@ -12,8 +12,6 @@ function buildGauge (sample) {
    */
   wfreqJson.then(function(wfreq) {
 
-    console.log(wfreq.WFREQ);
-
     // Get the frequency of wash
     var wfreqNeedle = wfreq.WFREQ;
 

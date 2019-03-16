@@ -30,12 +30,10 @@ Base.prepare(db.engine, reflect=True)
 Samples_Metadata = Base.classes.sample_metadata
 Samples = Base.classes.samples
 
-
 @app.route("/")
 def index():
     """Return the homepage."""
     return render_template("index.html")
-
 
 @app.route("/names")
 def names():
@@ -106,15 +104,13 @@ def wfreq(sample):
         Samples_Metadata.WFREQ
     ]
 
-    results = db.session.query(*sel).filter(Samples_Metadata.sample == sample).all()
-
+    result = db.session.query(*sel).filter(Samples_Metadata.sample == sample).all()
+    
     # Create a dictionary entry for each row of metadata information
     wfreq_metadata = {}
-    for result in results:
-        wfreq_metadata["sample"] = result[0]
-        wfreq_metadata["WFREQ"] = result[1]
-        
-    print(wfreq_metadata)
+    wfreq_metadata["sample"] = result[0][0]
+    wfreq_metadata["WFREQ"] = result[0][1]
+    
     return jsonify(wfreq_metadata)
 
 if __name__ == "__main__":
